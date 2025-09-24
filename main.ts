@@ -151,7 +151,7 @@ namespace mp2LineFollower {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
-        let d: number = input.compassHeading(); // Initial compass heading
+        let h: number = input.compassHeading(); // Initial compass heading
 
         // Start motor
         _controlMotorTurn(direction);
@@ -175,7 +175,7 @@ namespace mp2LineFollower {
         while (_running) {
             sensorDisplay();
 
-            // TODO: minDegrees not met, continue loop
+            if (_headingChange(h) < minDegrees) continue;
 
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorM) == 1) m = true;
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 1) l1 = true;
@@ -187,6 +187,9 @@ namespace mp2LineFollower {
         // Continue turning until edge sensor falls off the line
         while ((_running = true)) {
             sensorDisplay();
+
+            if (_headingChange(h) > maxDegrees) break;
+
             if (direction == TurnDirection.Left && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 0) break;
             else if (direction == TurnDirection.Right && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR1) == 0) break;
         }
@@ -245,5 +248,12 @@ namespace mp2LineFollower {
             if (values[i]) led.plot(x[i], y[i]);
             else led.unplot(x[i], y[i]);
         }
+    }
+
+    // Calculate heading change
+    function _headingChange(initialHeading: number) {
+        let x = (input.compassHeading() - initialHeading) % 360;
+        if (x > 0) return x;
+        return 0 - x;
     }
 }
