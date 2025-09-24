@@ -252,8 +252,15 @@ namespace mp2LineFollower {
 
     // Calculate heading change
     function _headingChange(initialHeading: number) {
-        let x = (input.compassHeading() - initialHeading) % 360;
-        if (x > 0) return x;
-        return 0 - x;
+        let currentHeading = input.compassHeading();
+        let x = 0;
+        
+        if (initialHeading > currentHeading)
+            x = initialHeading - currentHeading;
+        else
+            x = currentHeading - initialHeading;
+        
+        if (x > 180) return 360 - x;
+        return x;
     }
 }
