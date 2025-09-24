@@ -144,10 +144,8 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
-    //% block="turn %direction | of at least (degees) %minDegrees | and at most (degrees) %maxDegrees"
-    //% minDegrees.min=0 minDegrees.max=360 minDegrees.defl=30
-    //% maxDegrees.min=0 maxDegrees.max=360 maxDegrees.defl=150
-    export function turn(direction: TurnDirection, minDegrees: number, maxDegrees: number) {
+    //% block="turn %direction | with outer sensor detection enabled %outerDetection"
+    export function turn(direction: TurnDirection, outerDetection: boolean) {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
@@ -158,24 +156,21 @@ namespace mp2LineFollower {
         _running = true;
 
         // Turn until the outer sensors see the line first
-        /*
-        while (_running) {
-            sensorDisplaySingle()
+        while (_running && outerDetection) {
+            sensorDisplay();
+
             if (direction == TurnDirection.Left &&
                 maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 1) {
-                break
+                break;
             } else if (direction == TurnDirection.Right &&
                 maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 1) {
-                break
+                break;
             }
         }
-        */
 
         // Turn until all 3 front sensors have seen the line
         while (_running) {
             sensorDisplay();
-
-            if (_headingChange(h) < minDegrees) continue;
 
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorM) == 1) m = true;
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 1) l1 = true;
@@ -185,11 +180,8 @@ namespace mp2LineFollower {
         }
 
         // Continue turning until edge sensor falls off the line
-        while ((_running = true)) {
+        while (_running) {
             sensorDisplay();
-
-            if (_headingChange(h) > maxDegrees) break;
-
             if (direction == TurnDirection.Left && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 0) break;
             else if (direction == TurnDirection.Right && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR1) == 0) break;
         }
@@ -248,19 +240,5 @@ namespace mp2LineFollower {
             if (values[i]) led.plot(x[i], y[i]);
             else led.unplot(x[i], y[i]);
         }
-    }
-
-    // Calculate heading change
-    function _headingChange(initialHeading: number) {
-        let currentHeading = input.compassHeading();
-        let x = 0;
-        
-        if (initialHeading > currentHeading)
-            x = initialHeading - currentHeading;
-        else
-            x = currentHeading - initialHeading;
-        
-        if (x > 180) return 360 - x;
-        return x;
     }
 }
