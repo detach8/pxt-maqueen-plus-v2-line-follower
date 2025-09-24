@@ -41,6 +41,10 @@ namespace mp2LineFollower {
     }
 
     //% block="set line following speed parameters | forward %forwardSpeed yaw fast %yawFastSpeed slow %yawSlowSpeed turn %turnSpeed"
+    //% forwardSpeed.min=0 forwardSpeed.max=255 forwardSpeed.defl=20
+    //% yawFastSpeed.min=0 yawFastSpeed.max=255 yawFastSpeed.defl=28
+    //% yawSlowSpeed.min=0 yawSlowSpeed.max=255 yawSlowSpeed.defl=0
+    //% turnSpeed.min=0 turnSpeed.max=255 turnSpeed.defl=32
     export function setSpeedParameters(forwardSpeed: number, yawFastSpeed: number, yawSlowSpeed: number, turnSpeed: number) {
         _forwardSpeed = forwardSpeed;
         _yawFastSpeed = yawFastSpeed;
@@ -54,6 +58,9 @@ namespace mp2LineFollower {
     }
 
     //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distace"
+    //% trigPin.defl=DigitalPin.P13
+    //% echoPin.defl=DigitalPin.P14
+    //% distance.min=0 distance.defl=5
     export function setUltrasonicParameters(trigPin: DigitalPin, echoPin: DigitalPin, distance: number) {
         _ultrasonicTrigPin = trigPin;
         _ultrasonicEchoPin = echoPin;
@@ -77,7 +84,7 @@ namespace mp2LineFollower {
         _running = false;
     }
 
-    //% block="do line following until %mode with ultrasonic enabled %ultrasonic"
+    //% block="do line following | until %mode | with ultrasonic enabled %ultrasonic"
     export function doLineFollowing(mode: LineFollowingMode, ultrasonic: boolean) {
         let state: LineFollowingState = LineFollowingState.Straight;
         let lastState: LineFollowingState = LineFollowingState.Stop;
@@ -137,8 +144,10 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
-    //% block="turn %direction of at least (degees) %minDegrees"
-    export function turn(direction: TurnDirection, minDegrees: number) {
+    //% block="turn %direction | of at least (degees) %minDegrees | and at most (degrees) %maxDegrees"
+    //% minDegrees.min=0 minDegrees.max=360 minDegrees.defl=30
+    //% maxDegrees.min=0 maxDegrees.max=360 maxDegrees.defl=150
+    export function turn(direction: TurnDirection, minDegrees: number, maxDegrees: number) {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
@@ -186,6 +195,7 @@ namespace mp2LineFollower {
     }
 
     //% block="move forward | for (ms) %milliseconds"
+    //% milliseconds.defl=600
     export function moveForward(milliseconds: number) {
         _controlMotorLine(LineFollowingState.Straight);
         basic.pause(milliseconds);
@@ -221,6 +231,7 @@ namespace mp2LineFollower {
         }
     }
 
+    // Internal function to send motor control commands
     function _controlMotorStop() {
         maqueenPlusV2.controlMotorStop(maqueenPlusV2.MyEnumMotor.AllMotor);
     }
