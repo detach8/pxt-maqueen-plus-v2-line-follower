@@ -90,7 +90,7 @@ namespace mp2LineFollower {
 
     //% block="do line following until %mode || with ultrasonic detection enabled %ultrasonic"
     //% ultrasonic.defl=false
-    export function doLineFollowing(mode: LineFollowingMode, ultrasonic?: boolean) {
+    export function doLineFollowing(mode: LineFollowingMode, ultrasonic: boolean = false) {
         let state: LineFollowingState = LineFollowingState.Straight;
         let lastState: LineFollowingState = LineFollowingState.Stop;
 
@@ -151,7 +151,7 @@ namespace mp2LineFollower {
 
     //% block="turn %direction || with outer sensor detection enabled %outerDetection"
     //% outerDetection.defl=false
-    export function turn(direction: TurnDirection, outerDetection?: boolean) {
+    export function turn(direction: TurnDirection, outerDetection: boolean = false) {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
