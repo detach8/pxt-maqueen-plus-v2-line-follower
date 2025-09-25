@@ -23,13 +23,13 @@ namespace mp2LineFollower {
     }
 
     export enum LineFollowingMode {
-        //% block="junction detected on L2 or R2 sensors"
+        //% block="junction detected"
         Junction,
-        //% block="lost track at M sensor"
+        //% block="lost track"
         LostTrack,
         //% block="junction detected or lost track"
         JunctionOrLostTrack,
-        //% block="unconditionally or until ultrasonic obstacle detected"
+        //% block="unconditionally, or until ultrasonic obstacle detected"
         None,
     }
 
@@ -40,7 +40,8 @@ namespace mp2LineFollower {
         Right,
     }
 
-    //% block="set line following speed parameters | forward %forwardSpeed yaw fast %yawFastSpeed slow %yawSlowSpeed turn %turnSpeed"
+    //% block="set line following speed parameters | forward %forwardSpeed | yaw fast %yawFastSpeed | yaw slow %yawSlowSpeed | turn %turnSpeed"
+    //% inlineInputMode=external
     //% forwardSpeed.min=0 forwardSpeed.max=255 forwardSpeed.defl=20
     //% yawFastSpeed.min=0 yawFastSpeed.max=255 yawFastSpeed.defl=28
     //% yawSlowSpeed.min=0 yawSlowSpeed.max=255 yawSlowSpeed.defl=0
@@ -59,7 +60,8 @@ namespace mp2LineFollower {
     }
     */
 
-    //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distace"
+    //% block="set ultrasonic detection parameters | trig pin %trigPin | echo pin %echoPin | distance (cm) %distance"
+    //% inlineInputMode=external
     //% trigPin.defl=DigitalPin.P13
     //% echoPin.defl=DigitalPin.P14
     //% distance.min=0 distance.defl=5
@@ -86,7 +88,8 @@ namespace mp2LineFollower {
         _running = false;
     }
 
-    //% block="do line following | until %mode | with ultrasonic enabled %ultrasonic"
+    //% block="do line following until %mode || with ultrasonic detection enabled %ultrasonic"
+    //% ultrasonic.defl=false
     export function doLineFollowing(mode: LineFollowingMode, ultrasonic: boolean) {
         let state: LineFollowingState = LineFollowingState.Straight;
         let lastState: LineFollowingState = LineFollowingState.Stop;
@@ -146,12 +149,12 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
-    //% block="turn %direction | with outer sensor detection enabled %outerDetection"
+    //% block="turn %direction || with outer sensor detection enabled %outerDetection"
+    //% outerDetection.defl=false
     export function turn(direction: TurnDirection, outerDetection: boolean) {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
-        let h: number = input.compassHeading(); // Initial compass heading
 
         // Start motor
         _controlMotorTurn(direction);
@@ -191,7 +194,7 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
-    //% block="move forward | for (ms) %milliseconds"
+    //% block="move forward for (ms) %milliseconds"
     //% milliseconds.defl=600
     export function moveForward(milliseconds: number) {
         _controlMotorLine(LineFollowingState.Straight);
