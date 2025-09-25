@@ -40,7 +40,7 @@ namespace mp2LineFollower {
         Right,
     }
 
-    //% block="set line following speed parameters | forward %forwardSpeed | yaw fast %yawFastSpeed | yaw slow %yawSlowSpeed | turn %turnSpeed"
+    //% block="set line following speed parameters | forward %forwardSpeed yaw fast %yawFastSpeed yaw slow %yawSlowSpeed turn %turnSpeed"
     //% inlineInputMode=external
     //% forwardSpeed.min=0 forwardSpeed.max=255 forwardSpeed.defl=20
     //% yawFastSpeed.min=0 yawFastSpeed.max=255 yawFastSpeed.defl=28
@@ -60,7 +60,7 @@ namespace mp2LineFollower {
     }
     */
 
-    //% block="set ultrasonic detection parameters | trig pin %trigPin | echo pin %echoPin | distance (cm) %distance"
+    //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distance"
     //% inlineInputMode=external
     //% trigPin.defl=DigitalPin.P13
     //% echoPin.defl=DigitalPin.P14
@@ -90,7 +90,7 @@ namespace mp2LineFollower {
 
     //% block="do line following until %mode || with ultrasonic detection enabled %ultrasonic"
     //% ultrasonic.defl=false
-    export function doLineFollowing(mode: LineFollowingMode, ultrasonic: boolean) {
+    export function doLineFollowing(mode: LineFollowingMode, ultrasonic?: boolean) {
         let state: LineFollowingState = LineFollowingState.Straight;
         let lastState: LineFollowingState = LineFollowingState.Stop;
 
@@ -151,7 +151,7 @@ namespace mp2LineFollower {
 
     //% block="turn %direction || with outer sensor detection enabled %outerDetection"
     //% outerDetection.defl=false
-    export function turn(direction: TurnDirection, outerDetection: boolean) {
+    export function turn(direction: TurnDirection, outerDetection?: boolean) {
         let l1: boolean = false;
         let r1: boolean = false;
         let m: boolean = false;
