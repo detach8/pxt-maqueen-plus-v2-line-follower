@@ -23,11 +23,11 @@ namespace mp2LineFollower {
     }
 
     export enum LineFollowingMode {
-        //% block="junction detected"
+        //% block="junction detected only"
         Junction,
-        //% block="lost track"
+        //% block="lost track only"
         LostTrack,
-        //% block="junction detected or lost track"
+        //% block="junction detected, or lost track"
         JunctionOrLostTrack,
         //% block="unconditionally, or until ultrasonic obstacle detected"
         None,
