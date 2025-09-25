@@ -53,9 +53,11 @@ namespace mp2LineFollower {
     }
 
     //% block="set PID parameters | Kp %kp Ki %ki Kd %kd"
+    /*
     export function setPIDParameters(kp: number, ki: number, kd: number) {
         // TODO
     }
+    */
 
     //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distace"
     //% trigPin.defl=DigitalPin.P13
