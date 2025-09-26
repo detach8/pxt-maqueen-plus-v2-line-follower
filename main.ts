@@ -231,8 +231,10 @@ namespace mp2LineFollower {
                 break;
             case LineFollowingState.Straight:
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, _forwardSpeed);
+                break;
             case LineFollowingState.Reverse:
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, _forwardSpeed);
+                break;
             default:
                 _controlMotorStop();
         }
