@@ -141,7 +141,7 @@ the line follower.
 
 ### turn(direction: TurnDirection, outerDetection: boolean = false)
 
-Turn the robot toward `direction`:
+Turn the robot toward `direction` until line is detected:
 * `TurnDirection.Left`: Turn left
 * `TurnDirection.Right`: Turn right
 

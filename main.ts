@@ -151,7 +151,7 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
-    //% block="turn %direction || with outer sensor detection enabled %outerDetection"
+    //% block="turn %direction until line is detected || with outer sensor detection enabled %outerDetection"
     //% outerDetection.defl=false
     export function turn(direction: TurnDirection, outerDetection: boolean = false) {
         let l1: boolean = false;
