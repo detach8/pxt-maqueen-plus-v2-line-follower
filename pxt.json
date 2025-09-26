@@ -1,5 +1,6 @@
 {
     "name": "Maqueen Plus V2 Line Follower",
+    "version": "1.0.0",
     "description": "",
     "dependencies": {
         "core": "*",
