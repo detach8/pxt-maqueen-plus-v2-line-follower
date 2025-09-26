@@ -5,6 +5,7 @@
  */
 
 //% weight=100 color=#0fbc11 icon="\uf067" block="Line Follower for Maqueen Plus V2"
+//% help=github:detach8/pxt-maqueen-plus-v2-line-follower
 namespace mp2LineFollower {
     let _running: boolean = false;
     let _forwardSpeed: number = 20;
@@ -18,6 +19,7 @@ namespace mp2LineFollower {
     enum LineFollowingState {
         Stop,
         Straight,
+        Reverse,
         Left,
         Right,
     }
@@ -55,10 +57,10 @@ namespace mp2LineFollower {
 
     //% block="set PID parameters | Kp %kp Ki %ki Kd %kd"
     /*
-    export function setPIDParameters(kp: number, ki: number, kd: number) {
-        // TODO
-    }
-    */
+      export function setPIDParameters(kp: number, ki: number, kd: number) {
+          // TODO
+      }
+      */
 
     //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distance"
     //% inlineInputMode=external
@@ -71,7 +73,7 @@ namespace mp2LineFollower {
         _ultrasonicDistance = distance;
     }
 
-    //% block="read and display line sensor state on last row of LEDs"
+    //% block="read and display line sensor state on first row of LEDs"
     export function sensorDisplay() {
         _sensorDisplayArray([
             maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2),
@@ -164,11 +166,9 @@ namespace mp2LineFollower {
         while (_running && outerDetection) {
             sensorDisplay();
 
-            if (direction == TurnDirection.Left &&
-                maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 1) {
+            if (direction == TurnDirection.Left && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 1) {
                 break;
-            } else if (direction == TurnDirection.Right &&
-                maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 1) {
+            } else if (direction == TurnDirection.Right && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 1) {
                 break;
             }
         }
@@ -180,7 +180,7 @@ namespace mp2LineFollower {
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorM) == 1) m = true;
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 1) l1 = true;
             if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR1) == 1) r1 = true;
-            
+
             if (l1 && r1 && m) break;
         }
 
@@ -202,6 +202,22 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
+    //% block="move backward for (ms) %milliseconds"
+    //% milliseconds.defl=600
+    export function moveBackward(milliseconds: number) {
+        _controlMotorLine(LineFollowingState.Reverse);
+        basic.pause(milliseconds);
+        _controlMotorStop();
+    }
+
+    //% block="rotate robot in %direction for (ms) %milliseconds"
+    //% milliseconds.defl=1000
+    export function rotate(direction: TurnDirection, milliseconds: number) {
+        _controlMotorTurn(direction);
+        basic.pause(milliseconds);
+        _controlMotorStop();
+    }
+
     // Internal function to send motor control commands
     function _controlMotorLine(state: LineFollowingState) {
         switch (state) {
@@ -213,8 +229,12 @@ namespace mp2LineFollower {
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, _yawSlowSpeed);
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, _yawFastSpeed);
                 break;
-            default:
+            case LineFollowingState.Straight:
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, _forwardSpeed);
+            case LineFollowingState.Reverse:
+                maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, _forwardSpeed);
+            default:
+                _controlMotorStop();
         }
     }
 
@@ -240,7 +260,7 @@ namespace mp2LineFollower {
     function _sensorDisplayArray(values: Array<number>) {
         // Note: 1 == black, 0 == white
         let x = [0, 1, 2, 3, 4];
-        let y = [4, 4, 4, 4, 4];
+        let y = [0, 0, 0, 0, 0];
         for (let i = 0; i < 5; i++) {
             if (values[i]) led.plot(x[i], y[i]);
             else led.unplot(x[i], y[i]);
