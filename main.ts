@@ -42,6 +42,13 @@ namespace mp2LineFollower {
         Right,
     }
 
+    /** 
+     * Sets the line following motor speed parameters.
+     * @param forwardSpeed Speed of both motors when robot is moving straight
+     * @param yawFastSpeed Speed of the faster motor when robot is yawing to stay on track
+     * @param yawSlowSpeed Speed of the faster motor when robot is yawing to stay on track
+     * @param turnSpeed Speed of the motors when robot is turning (both motors turn in opposing direction)
+     */
     //% block="set line following speed parameters | forward %forwardSpeed yaw fast %yawFastSpeed yaw slow %yawSlowSpeed turn %turnSpeed"
     //% inlineInputMode=external
     //% forwardSpeed.min=0 forwardSpeed.max=255 forwardSpeed.defl=20
@@ -55,13 +62,12 @@ namespace mp2LineFollower {
         _turnSpeed = turnSpeed;
     }
 
-    //% block="set PID parameters | Kp %kp Ki %ki Kd %kd"
-    /*
-      export function setPIDParameters(kp: number, ki: number, kd: number) {
-          // TODO
-      }
-      */
-
+    /**
+     * Sets the ultrasonic detection parameters.
+     * @param trigPin Trigger pin (default DigitalPin.P13)
+     * @param echoPin Echo pin (default DigitalPin.P14)
+     * @param distance Distance to stop line following (in cm)
+     */
     //% block="set ultrasonic detection parameters | trig pin %trigPin echo pin %echoPin distance (cm) %distance"
     //% inlineInputMode=external
     //% trigPin.defl=DigitalPin.P13
@@ -73,6 +79,10 @@ namespace mp2LineFollower {
         _ultrasonicDistance = distance;
     }
 
+    /**
+     * Read and display the sensor status on the first row of LEDs on the micro:bit.
+     * You can add this to your forever loop to aid debugging.
+     */
     //% block="read and display line sensor state on first row of LEDs"
     export function sensorDisplay() {
         _sensorDisplayArray([
@@ -84,12 +94,20 @@ namespace mp2LineFollower {
         ]);
     }
 
+    /**
+     * Stops the line following or turn
+     */
     //% block="abort line following"
     export function abortLineFollowing() {
         // TODO: Doesn't work well, need other ways to terminate the infinite loop
         _running = false;
     }
 
+    /**
+     * Performs line following using various termination modes.
+     * If ultrasonic detection is set to true, then an ultrasonic obstacle will always stop the robot even if a junction is not yet detected.
+     * See https://detach8.github.io/pxt-maqueen-plus-v2-line-follower/ for more information.
+     */
     //% block="do line following until %mode || with ultrasonic detection enabled %ultrasonic"
     //% ultrasonic.defl=false
     export function doLineFollowing(mode: LineFollowingMode, ultrasonic: boolean = false) {
@@ -151,6 +169,11 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
+    /**
+     * Turn the robot until a line is deteced. The front sensors are used to detect the destination line.
+     * If outerDetection is set to true, then the inside outer sensor (i.e. L2 in a left turn, R2 in a right turn) must see a line before the front sensors detect the destination line.
+     * See https://detach8.github.io/pxt-maqueen-plus-v2-line-follower/ for more information.
+     */
     //% block="turn %direction until line is detected || with outer sensor detection enabled %outerDetection"
     //% outerDetection.defl=false
     export function turn(direction: TurnDirection, outerDetection: boolean = false) {
@@ -194,6 +217,9 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
+    /**
+     * Move the robot forward for a duration of milliseconds ms (1 second = 1000 ms) using the configured forward speed.
+     */
     //% block="move forward for (ms) %milliseconds"
     //% milliseconds.defl=600
     export function moveForward(milliseconds: number) {
@@ -202,6 +228,9 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
+    /**
+     * Move the robot backward for a duration of milliseconds ms (1 second = 1000 ms) using the configured forward speed.
+     */
     //% block="move backward for (ms) %milliseconds"
     //% milliseconds.defl=600
     export function moveBackward(milliseconds: number) {
@@ -210,6 +239,9 @@ namespace mp2LineFollower {
         _controlMotorStop();
     }
 
+    /**
+     * Turn the robot toward direction for a duration of milliseconds ms (1 second = 1000 ms) using the configured turn speed.
+     */
     //% block="rotate robot in %direction for (ms) %milliseconds"
     //% milliseconds.defl=1000
     export function rotate(direction: TurnDirection, milliseconds: number) {
